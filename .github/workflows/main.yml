@@ -1,0 +1,38 @@
+# Save this file as: .github/workflows/ci.yml  (inside your React repo)
+#
+# Note: If you connect this repo directly to Vercel or Netlify, deployment
+# happens automatically on push — you don't need a "deploy" job here.
+# This workflow just makes sure every PR/push is linted, tested, and builds cleanly.
+
+name: React CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm test --if-present -- --watchAll=false
+
+      - name: Build
+        run: npm run build
